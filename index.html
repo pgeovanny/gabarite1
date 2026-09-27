@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Central local para organizar e extrair PDFs em blocos para produção de resumos." />
+  <title>Resumos Pro — Central de Produção</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <button id="brandBtn" class="brand-button" title="Meus resumos">
+        <span class="brand-mark">RP</span>
+        <span><small>RESUMOS PRO</small><strong>Central de Produção</strong></span>
+      </button>
+      <div class="top-actions">
+        <span class="privacy-badge"><span class="dot"></span>dados locais neste navegador</span>
+        <button id="exportWorkspaceBtn" class="btn btn-ghost btn-small">Exportar backup</button>
+        <label class="btn btn-ghost btn-small file-action">Importar backup<input id="importWorkspaceInput" type="file" accept="application/json,.json" hidden></label>
+      </div>
+    </header>
+
+    <section id="dashboardView" class="view">
+      <div class="dashboard-hero panel">
+        <div>
+          <p class="eyebrow">MEUS RESUMOS</p>
+          <h1>Produção organizada por projeto.</h1>
+          <p>Cadastre cada material, guarde as aulas dentro dele e retome exatamente do bloco onde parou.</p>
+        </div>
+        <button id="newProjectBtn" class="btn btn-primary btn-large">+ Novo resumo</button>
+      </div>
+      <section class="dashboard-stats" id="dashboardStats"></section>
+      <section class="panel project-library">
+        <div class="section-title-row">
+          <div><p class="eyebrow">BIBLIOTECA</p><h2>Resumos em produção</h2></div>
+          <div class="library-tools"><input id="projectSearch" class="search-input" placeholder="Buscar resumo, matéria ou concurso..." /><select id="projectFilter" class="select-input"><option value="all">Todos</option><option value="production">Em produção</option><option value="done">Concluídos</option><option value="paused">Pausados</option></select></div>
+        </div>
+        <div id="emptyProjects" class="empty-state hidden"><div class="empty-icon">01</div><h3>Cadastre seu primeiro resumo</h3><p>Exemplo: <strong>AFO — TCE-GO</strong>. Depois, adicione quantos PDFs ou aulas forem necessários.</p><button id="emptyNewProjectBtn" class="btn btn-primary">Criar primeiro resumo</button></div>
+        <div id="projectGrid" class="project-grid"></div>
+      </section>
+    </section>
+
+    <section id="projectView" class="view hidden">
+      <nav class="breadcrumb"><button id="backDashboardBtn">← Meus resumos</button><span>/</span><strong id="projectCrumb">—</strong></nav>
+      <section class="panel project-header-card"><div class="project-header-main"><div><p id="projectStatusEyebrow" class="eyebrow">EM PRODUÇÃO</p><h1 id="activeProjectTitle">—</h1><p id="activeProjectMeta" class="muted">—</p></div><div class="project-header-actions"><button id="editProjectBtn" class="btn btn-ghost">Editar projeto</button><button id="addPdfBtn" class="btn btn-primary">+ Adicionar PDF / Aula</button></div></div><div id="projectStats" class="stats-grid"></div></section>
+      <section class="panel document-library"><div class="section-title-row"><div><p class="eyebrow">CONTEÚDO</p><h2>PDFs e aulas</h2></div><span id="projectProgressText" class="muted">—</span></div><div id="emptyDocuments" class="empty-state compact hidden"><div class="empty-icon">PDF</div><h3>Nenhum PDF neste resumo</h3><p>Adicione a primeira aula ou material para começar a produção.</p><button id="emptyAddPdfBtn" class="btn btn-primary">Adicionar PDF</button></div><div id="documentList" class="document-list"></div></section>
+
+      <section id="extractorArea" class="hidden">
+        <section class="hero-card panel"><div class="hero-copy"><p class="eyebrow">NOVO PDF / AULA</p><h2>Extrair e vincular ao resumo</h2><p>O PDF será processado localmente e salvo neste projeto como texto e blocos. O arquivo original não é armazenado.</p></div><label id="dropZone" class="drop-zone" for="pdfInput"><input id="pdfInput" type="file" accept="application/pdf,.pdf" hidden /><div class="drop-icon">PDF</div><strong>Arraste o PDF aqui</strong><span>ou clique para selecionar</span></label><div id="fileMeta" class="file-meta hidden"></div><div class="extractor-actions"><button id="cancelExtractorBtn" class="btn btn-ghost">Cancelar</button><button id="processBtn" class="btn btn-primary" disabled>Processar e salvar</button></div><div id="progressWrap" class="progress-wrap hidden"><div class="progress-track"><div id="progressBar" class="progress-bar"></div></div><span id="progressText">Preparando...</span></div></section>
+        <section class="settings-grid"><article class="panel settings-panel"><div class="section-title-row"><div><p class="eyebrow">DIVISÃO</p><h3>Tamanho dos blocos</h3></div><button id="resetSettings" class="btn btn-ghost btn-small">Restaurar</button></div><div class="field-grid"><label class="field"><span>Mínimo</span><div class="input-suffix"><input id="minChars" type="number" min="5000" step="1000" value="15000" /><span>car.</span></div></label><label class="field"><span>Ideal</span><div class="input-suffix"><input id="targetChars" type="number" min="7000" step="1000" value="20000" /><span>car.</span></div></label><label class="field"><span>Máximo</span><div class="input-suffix"><input id="maxChars" type="number" min="10000" step="1000" value="28000" /><span>car.</span></div></label><label class="field"><span>Sobreposição</span><div class="input-suffix"><input id="overlapChars" type="number" min="0" step="500" value="2000" /><span>car.</span></div></label></div><div class="toggle-list"><label class="toggle-row"><input id="preferHeadings" type="checkbox" checked /><span>Preferir corte antes de títulos aparentes</span></label><label class="toggle-row"><input id="preferPageBreaks" type="checkbox" checked /><span>Preferir mudança de página próxima do alvo</span></label><label class="toggle-row"><input id="removeRepeated" type="checkbox" checked /><span>Limpar cabeçalhos, rodapés e artefatos recorrentes</span></label></div></article><article class="panel info-panel"><p class="eyebrow">LIMPEZA INTELIGENTE</p><h3>Mais conservadora onde importa.</h3><p>Remove marcadores técnicos, notas numéricas soltas e ruído repetido, sem tentar “entender” ou reescrever o conteúdo jurídico.</p><div class="rule-stack"><div><span>1</span><p>Artefatos como ==91902==</p></div><div><span>2</span><p>Notas de rodapé numéricas isoladas</p></div><div><span>3</span><p>Alternativas e títulos reorganizados</p></div></div></article></section>
+      </section>
+
+      <section id="resultSection" class="results hidden">
+        <div class="panel summary-panel"><div class="summary-head"><div><p class="eyebrow">PDF ATIVO</p><h2 id="documentName">—</h2><p id="documentDetails" class="muted">—</p></div><div class="summary-actions"><button id="copyFullBtn" class="btn btn-secondary">Copiar texto completo</button><button id="downloadFullBtn" class="btn btn-ghost">Baixar texto limpo</button></div></div><div id="statsGrid" class="stats-grid"></div><div id="scanWarning" class="warning hidden"></div></div>
+        <section class="panel audit-panel"><div class="audit-head"><div><p class="eyebrow">AUDITORIA DE COBERTURA</p><h3>Confira se o texto extraído entrou nos blocos</h3><p class="muted">A integridade mede o texto que o extrator conseguiu ler. Páginas sem texto extraível aparecem destacadas para conferência manual.</p></div><div id="integrityBadge" class="integrity-badge">—</div></div><div id="auditGrid" class="audit-grid"></div><div class="coverage-card"><div class="coverage-title-row"><div><strong>Mapa do PDF</strong><span id="coverageSummary" class="muted">—</span></div><div class="coverage-legend"><span><i class="legend-dot ok"></i> distribuída</span><span><i class="legend-dot low"></i> pouco texto</span><span><i class="legend-dot empty"></i> sem texto</span></div></div><div id="coverageMap" class="coverage-map"></div></div><div id="pageInspector" class="page-inspector hidden"><div class="page-inspector-head"><div><p class="eyebrow">PÁGINA SELECIONADA</p><h3 id="pageInspectorTitle">—</h3><p id="pageInspectorMeta" class="muted">—</p></div><button id="copyPageBtn" class="btn btn-secondary btn-small">Copiar página</button></div><div id="pageBlocks" class="page-blocks"></div><pre id="pagePreview" class="page-preview"></pre></div></section>
+        <div class="workspace-grid"><aside class="panel blocks-panel"><div class="section-title-row sticky-title"><div><p class="eyebrow">BLOCOS</p><h3 id="blockCountTitle">0 blocos</h3></div></div><div class="block-tools"><input id="blockSearch" class="search-input" placeholder="Buscar nos blocos..." /><div class="block-filter-row"><select id="statusFilter" class="select-input"><option value="all">Todos os status</option><option value="pending">Pendentes</option><option value="sent">Enviados</option></select><select id="typeFilter" class="select-input"><option value="all">Todos os tipos</option><option value="questions">Questões</option><option value="mixed">Teoria + questões</option><option value="theory">Teoria</option><option value="answers">Gabarito / comentários</option><option value="uncertain">Incerto</option></select></div><div class="bulk-mini-actions"><button id="selectVisibleBtn" class="btn btn-ghost btn-small">Selecionar visíveis</button><button id="selectPendingBtn" class="btn btn-ghost btn-small">Pendentes</button><button id="selectQuestionsBtn" class="btn btn-ghost btn-small">Só questões</button><button id="clearSelectionBtn" class="btn btn-ghost btn-small">Limpar</button></div><div id="questionSummary" class="question-summary">Analisando conteúdo…</div></div><div id="blockList" class="block-list"></div></aside><article class="panel block-viewer"><div class="block-header"><div><p id="currentBlockKicker" class="eyebrow">BLOCO —</p><h2 id="currentBlockTitle">—</h2><p id="currentBlockMeta" class="muted">—</p></div><div class="viewer-status-stack"><label class="done-toggle"><input id="doneCheckbox" type="checkbox" /><span>Enviado</span></label><label class="classify-field"><span>Tipo</span><select id="classificationSelect" class="select-input"><option value="theory">Teoria</option><option value="questions">Questões</option><option value="mixed">Teoria + questões</option><option value="answers">Gabarito / comentários</option><option value="uncertain">Incerto</option></select></label></div></div><div class="block-actions"><button id="prevBtn" class="btn btn-ghost">← Anterior</button><button id="copyBlockBtn" class="btn btn-primary">Copiar bloco atual</button><button id="nextBtn" class="btn btn-ghost">Próximo →</button></div><textarea id="blockText" readonly spellcheck="false"></textarea><div class="footer-actions"><button id="downloadBlockBtn" class="btn btn-secondary">Baixar bloco .txt</button><span id="copyFeedback" class="copy-feedback"></span></div><div id="batchBar" class="batch-bar hidden"><div><strong id="batchCount">0 blocos selecionados</strong><span id="batchChars">0 caracteres</span></div><div class="batch-actions"><button id="copySelectedBtn" class="btn btn-secondary">Copiar selecionados</button><button id="prepareBatchBtn" class="btn btn-primary">Preparar lote para o agente</button></div></div></article></div>
+      </section>
+    </section>
+  </main>
+  <dialog id="projectDialog" class="modal"><form id="projectForm" method="dialog" class="modal-card"><div><p class="eyebrow" id="projectDialogEyebrow">NOVO RESUMO</p><h2 id="projectDialogTitle">Cadastrar projeto</h2><p class="muted">Esse cadastro serve para organizar a produção. Os dados ficam neste navegador.</p></div><input id="editingProjectId" type="hidden" /><label class="modal-field"><span>Nome do resumo *</span><input id="projectNameInput" required maxlength="100" placeholder="Ex.: AFO — TCE-GO" /></label><div class="modal-grid"><label class="modal-field"><span>Matéria</span><input id="projectSubjectInput" maxlength="80" placeholder="AFO" /></label><label class="modal-field"><span>Concurso / órgão</span><input id="projectExamInput" maxlength="80" placeholder="TCE-GO" /></label></div><label class="modal-field"><span>Status</span><select id="projectStatusInput"><option value="production">Em produção</option><option value="paused">Pausado</option><option value="done">Concluído</option></select></label><label class="modal-field"><span>Observação</span><textarea id="projectNoteInput" rows="3" maxlength="300" placeholder="Ex.: material pós-edital, foco CEBRASPE..."></textarea></label><div class="modal-actions"><button type="button" id="cancelProjectDialog" class="btn btn-ghost">Cancelar</button><button type="submit" class="btn btn-primary">Salvar projeto</button></div></form></dialog>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
